@@ -81,4 +81,18 @@ class Battleship:
         ship_sizes = sorted(
             [len(ship.decks) for ship in self.ships], reverse=True
         )
-        if ship_sizes != [4, 3, 3, 2, 2
+        if ship_sizes != [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]:
+            raise ValueError("Invalid fleet composition")
+
+        for ship in self.ships:
+            for deck in ship.decks:
+                for dr in range(-1, 2):
+                    for dc in range(-1, 2):
+                        if dr == 0 and dc == 0:
+                            continue
+
+                        n_coords = (deck.row + dr, deck.column + dc)
+
+                        if n_coords in self.field:
+                            if self.field[n_coords] != ship:
+                                raise ValueError("Ships are touching!")
