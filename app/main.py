@@ -10,10 +10,10 @@ class Deck:
 
 class Ship:
     def __init__(
-            self,
-            start: Tuple[int, int],
-            end: Tuple[int, int],
-            is_drowned: bool = False
+        self,
+        start: Tuple[int, int],
+        end: Tuple[int, int],
+        is_drowned: bool = False
     ) -> None:
         if start[0] != end[0] and start[1] != end[1]:
             raise ValueError("Ships must be straight lines")
@@ -24,7 +24,6 @@ class Ship:
         row_start, row_end = min(start[0], end[0]), max(start[0], end[0])
         col_start, col_end = min(start[1], end[1]), max(start[1], end[1])
 
-        # Используем понятные имена индексов вместо r и c
         for row_idx in range(row_start, row_end + 1):
             for col_idx in range(col_start, col_end + 1):
                 self.decks.append(Deck(row_idx, col_idx))
@@ -44,8 +43,8 @@ class Ship:
 
 class Battleship:
     def __init__(
-            self,
-            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+        self,
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
         self.field: Dict[Tuple[int, int], Ship] = {}
         self.ships_list: List[Ship] = []
@@ -57,7 +56,6 @@ class Battleship:
                 if not (0 <= deck.row <= 9 and 0 <= deck.column <= 9):
                     raise ValueError("Coordinates out of range (0-9)")
 
-                # Валидация наложения (Overlap)
                 if (deck.row, deck.column) in self.field:
                     raise ValueError("Ships must not overlap")
 
@@ -88,7 +86,6 @@ class Battleship:
         )
         if ship_sizes != [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]:
             raise ValueError("Invalid ship sizes composition")
-
 
         for ship in self.ships_list:
             for deck in ship.decks:
