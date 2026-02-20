@@ -41,12 +41,12 @@ class Ship:
 class Battleship:
     def __init__(
         self,
-        ships_coordinates: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
         self.field: Dict[Tuple[int, int], Ship] = {}
         self.ships: List[Ship] = []
 
-        for start, end in ships_coordinates:
+        for start, end in ships:
             new_ship = Ship(start, end)
 
             for deck in new_ship.decks:
