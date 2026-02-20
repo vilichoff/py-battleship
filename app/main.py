@@ -15,8 +15,6 @@ class Ship:
         end: Tuple[int, int],
         is_drowned: bool = False
     ) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks: List[Deck] = []
 
@@ -41,13 +39,27 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]) -> None:
+    def __init__(self, ships_coordinates: List[Tuple[Tuple[int, int], Tuple[int, int]]]) -> None:
         self.field: Dict[Tuple[int, int], Ship] = {}
+        self.ships: List[Ship] = []
 
-        for start, end in ships:
+        for start, end in ships_coordinates:
             new_ship = Ship(start, end)
+
             for deck in new_ship.decks:
+                # 1. Проверка границ (0..9)
+                if not (0 <= deck.row <= 9 and 0 <= deck.column <= 9):
+                    raise ValueError("Ship is out of 10x10 bounds")
+
+                # 2. Проверка наложения
+                if (deck.row, deck.column) in self.field:
+                    raise ValueError("Ships overlap at standard coordinates")
+
                 self.field[(deck.row, deck.column)] = new_ship
+
+            self.ships.append(new_ship)
+
+        self._validate_field()
 
     def fire(self, location: Tuple[int, int]) -> str:
         if location not in self.field:
@@ -60,3 +72,27 @@ class Battleship:
             return "Sunk!"
 
         return "Hit!"
+
+    def _validate_field(self) -> None:
+        # Проверка количества кораблей
+        if len(self.ships) != 10:
+            raise ValueError("Invalid number of ships")
+
+        # Проверка состава флота
+        ship_sizes = sorted([len(ship.decks) for ship in self.ships], reverse=True)
+        if ship_sizes != [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]:
+            raise ValueError("Invalid fleet composition")
+
+        # Проверка касания
+        for ship in self.ships:
+            for deck in ship.decks:
+                for dr in range(-1, 2):
+                    for dc in range(-1, 2):
+                        if dr == 0 and dc == 0:
+                            continue
+
+                        neighbor = (deck.row + dr, deck.column + dc)
+
+                        if neighbor in self.field:
+                            if self.field[neighbor] != ship:
+                                raise ValueError("Ships are touching each other!")
